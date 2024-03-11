@@ -1,0 +1,711 @@
+Question 1 of 6
+Please indicate if you'd like to receive targeted feedback on your PCWbook. Clearly identify the question and the confusion point. The more details you include, the easier it will be to support your learning. 💌
+
+If you have tried the extra challenge question, that can earn you an extra grade, please say so here!
+
+I don't know why but I could not plot the graphs. I went through many iterations of all the functions and wrote them in several different ways (as you can see in the bottom 2 cells) to try to make it work.
+
+
+
+1️⃣ - Readings
+
+1) [Optional Review] Minerva University (2021). PCWBook of session 6, titled “Asymptotic Notations". 
+
+
+
+You can review this Study Guide from unit 1 if you want a refresher on time and space complexity. Focus on sections 4, 5, and 7. After reviewing this reading, you should have a clearly defined strategy for demonstrating, through experimental analyses, the scaling growth of several operations supported by randomly built BSTs.
+
+2) Part III, section 12.4 "Randomly built binary search trees" of Cormen, T. H., Leiserson, C. E., Rivest, R. L., & Stein, C. (2009). Introduction to algorithms (3rd ed.). Cambridge, MA: MIT Press.
+
+There is no equivalent section in the 4th Edition of the textbook. 
+
+
+
+This reading will help with theoretical insight into the behavior of randomly-constructed binary search trees. 
+
+Question 2 of 6
+🙋🏻‍♀️ Q1: What is the role of randomization in the efficiency of several operations supported by a randomly-generated BST?
+
+Randomization ensures that the average case of these several operations performs with a time complexity close to the best case. In a randomly-generated BST, the odds of a fully unbalanced partition are extremely low, especially if we consider that the tree is going to be built through many insertions, so even if one insertion is unbalanced, the following ones will tend to offset it. Due to this more balanced nature, the randomization of the tree ensures that its height/total depth is log n instead of n, making every operation that is dependent on the height of the tree operate in the desired complexity of O(log n).
+
+
+
+2️⃣ - Review and Concepts
+In order to be prepared for this session, you should be able to...
+
+
+
+🔲 Review last session's concepts, with a focus on the running times of each of the BST operations.
+
+
+
+🔲 Explain the process of inserting nodes into a BST sequentially to build the tree.
+
+
+
+Below, we describe some key concepts that will allow you to tick these boxes!
+
+Running Time of Binary Search Tree Operations
+
+
+
+You should remember that each of the operations on binary search trees had an asymptotic running time of ﻿
+�
+(
+ℎ
+)
+O(h)﻿, where ﻿
+ℎ
+h﻿ is the height of the binary tree. In this class, we will explore the heights of randomly-built binary search trees both experimentally and in theory.
+
+
+
+The case of randomly building BSTs is similar to that of randomized quicksort, in the way that when building a BST from a randomized list, although it is possible to get a worst-case (a tree with depth ﻿
+�
+n﻿), most cases are much closer to the best case (a tree with depth ﻿
+log
+⁡
+(
+�
+)
+log(n)﻿), such that the chance of getting a good balance is relatively high. Because of this, randomization can lead to a benefit in tree balance over an unknown order.
+
+3️⃣ - PCW Problems
+In the hidden code cell below is working code from the previous' session PCW. Run this code cell to load the definitions of the Python classes.
+
+Code Cell 1 of 11 - Hidden Code
+Run Code
+Out [24]
+Loading Node and BinarySearchTree classes from last session...
+	 ✅ Loading complete!
+Q1: Complete the following function that computes the depth of a given node in a BST identified by its root. Check that your code works properly by running the tests in the hidden cell that follow.
+
+Code Cell 2 of 11
+In [125]
+1
+def depth(bst, node, depth=0):
+2
+    """
+3
+    Finds the depth of the node in a BST. Depth of root is 0.
+4
+​
+5
+    Parameters
+6
+    ----------
+7
+    bst: BinarySearchTree
+8
+        The binary search tree where the node belongs to
+9
+    node: Node
+10
+        An existing node in the BST that we need to compute the depth of
+11
+​
+12
+    Returns
+13
+    ----------
+14
+    int
+15
+        the depth from root of the tree to node
+16
+    """
+17
+    # Check if the tree is empty
+18
+    if bst.root is None:
+19
+        return -1
+20
+​
+21
+    # Call the helper function
+22
+    return _depth_helper(bst.root, node, depth)
+23
+​
+24
+def _depth_helper(current_node, target_node, current_depth):
+25
+    '''
+26
+    Finds the depth of the target node of a BST through recursive calls.
+27
+​
+28
+    Parameters
+29
+    ----------
+30
+    current_node: Node
+31
+        The binary search tree where the node belongs to
+32
+    target_node: Node
+33
+        An existing node in the BST that we need to compute the depth of
+34
+    current_node_depth: int
+35
+        The depth of the current node    
+36
+​
+37
+    Returns
+38
+    ----------
+39
+    int
+40
+        the depth from root of the tree to target node, or -1 if the tree is empty
+41
+    '''
+42
+    if current_node is None:
+43
+        return -1
+44
+​
+45
+    if current_node.data is target_node.data:
+46
+        return current_depth
+47
+​
+48
+    if target_node.data < current_node.data:
+49
+        return _depth_helper(current_node.l_child, target_node, current_depth + 1)
+50
+    else:
+51
+        return _depth_helper(current_node.r_child, target_node, current_depth+ 1)
+Run Code
+Code Cell 3 of 11 - Hidden Code
+Run Code
+Out [126]
+100%|██████████| 9/9 [00:00<00:00, 42557.76it/s]
+Testing your code...
+
+
+ 	✅ All tests have passed
+
+Q2: Complete the following function, making use of DEPTH, to calculate the average number of comparisons required to search for a randomly chosen element of a standard BST. For example, the following tree:
+
+
+
+                    12
+                      \
+                       14
+
+
+will have an average number of comparisons of ﻿
+1.5
+1.5﻿. This is because ﻿
+50
+50﻿ of the time we will be searching for ﻿
+12
+12﻿ (﻿
+1
+1﻿ comparison), and ﻿
+50
+50﻿ of the time we will be searching for ﻿
+14
+14﻿ (﻿
+2
+2﻿ comparisons). In total, this means an average of ﻿
+(
+1
++
+2
+)
+/
+2
+=
+1.5
+(1+2)/2=1.5﻿ comparisons.
+
+
+
+You can test your function with this test case and others.
+
+
+
+Hint: the number of comparisons required to search for node a is DEPTH(bst, a) + 1. Please do not reinvent the wheel! 
+
+Code Cell 4 of 11
+In [129]
+1
+def average_comparisons(bst):
+2
+    """
+3
+    Finds the average number of comparisons required 
+4
+    to search for a randomly chosen element of a standard BST. 
+5
+​
+6
+    Parameters
+7
+    ----------
+8
+    bst: BinarySearchTree
+9
+        The binary search tree where we wish to find the average number of comparisons
+10
+​
+11
+    Returns
+12
+    ----------
+13
+    float
+14
+        the average number of comparisons
+15
+    """
+16
+    total_comparisons = 0
+17
+    total_nodes = 0
+18
+​
+19
+    def traverse(node):
+20
+        nonlocal total_comparisons, total_nodes
+21
+        if node is not None:
+22
+            total_nodes += 1
+23
+            total_comparisons += depth(bst, node) + 1
+24
+            if node.l_child is not None:
+25
+                traverse(node.l_child)
+26
+            if node.r_child is not None:
+27
+                traverse(node.r_child)
+28
+​
+29
+    traverse(bst.root)
+30
+    return total_comparisons / total_nodes
+31
+​
+Run Code
+🐍🐍🐍 Run the following hidden code cells to check if your coding implementation is correct.
+
+Code Cell 5 of 11 - Hidden Code
+Run Code
+Out [130]
+100%|██████████| 2/2 [00:00<00:00, 2905.65it/s]
+100%|██████████| 9/9 [00:00<00:00, 27334.35it/s]
+Testing your code the BST in the prompt...
+🧱Building the BST...
+	✅ Your code returned the correct answer!
+
+
+Testing your code for a BST built from [15, 6, 18, 3, 7, 17, 20, 2, 4]...
+🧱Building the BST...
+	✅ Your code returned the correct answer!
+
+Q3: How would you go about finding the maximum depth (of all the nodes in the tree), so that you can compute the height of the BST? Complete the following function, knowing it must run in ﻿
+�
+(
+𝑁
+)
+O(N)﻿ time (where ﻿
+𝑁
+N﻿ is the number of elements in the BST).
+
+
+
+Check whether your code is correctly implemented by running the test case within the same code cell.
+
+Code Cell 6 of 11
+In [132]
+1
+def height(bst):
+2
+    """
+3
+    Finds the (maximum) depth of a BST, or height.
+4
+    
+5
+    Input:
+6
+    bst: BinarySearchTree
+7
+        The binary search tree where the node belongs to
+8
+    
+9
+    Output:
+10
+    h: int
+11
+        The height of the tree
+12
+    """
+13
+    def find_height(node):
+14
+        if node is None:
+15
+            return -1
+16
+        else:
+17
+            left_height = find_height(node.l_child)
+18
+            right_height = find_height(node.r_child)
+19
+            return max(left_height, right_height) + 1
+20
+    
+21
+    return find_height(bst.root)
+22
+    
+23
+## testing your code
+24
+bst = BinarySearchTree()
+25
+nodes = [Node(15), Node(6), Node(18), Node(3), Node(7), 
+26
+         Node(17), Node(20), Node(2), Node(4)]
+27
+for node in nodes:
+28
+    bst.insert(node)
+29
+assert(height(bst) == 3)
+Run Code
+Q4: Using the AVERAGE_COMPARISONS function, complete the following function to return the average depth of the tree. The average depth is related to the average number of comparisons as average depth = (average comparisons - 1), since the root has depth zero.
+
+Code Cell 7 of 11
+In [133]
+1
+def avg_depth(bst):
+2
+    """
+3
+    Computes the average depth of a BST
+4
+    
+5
+    Input:
+6
+    bst: BinarySearchTree
+7
+        The binary search tree
+8
+    
+9
+    Output:
+10
+    - avg_d: float
+11
+        Average depth of the binary search tree
+12
+    """
+13
+    avg_comparisons = average_comparisons(bst)
+14
+    return avg_comparisons - 1
+15
+    
+Run Code
+🐍🐍🐍 Run the following hidden code cells to check if your coding implementation is correct.
+
+Code Cell 8 of 11 - Hidden Code
+Run Code
+Out [134]
+Testing your code...
+✅ Got the expected result!
+Question 3 of 6
+Q5: Now, insert randomly shuffled lists into BSTs, and measure the average depth and the height of the tree. How do these statistics scale as you increase ﻿
+𝑁
+N﻿, the number of nodes? 
+
+Although I could not measure the actual scaling of both inputs since I was not able to plot the graph, theoretically, both operations should scale at O(log n) since the operations are directly related to the height/depth of the tree. Given that it is a randomly built tree, the average performance should approximate a best case performance in which the depth/height has a magnitude of log n.
+
+
+
+Produce a plot showing these scaling behaviors. For a meaningful figure, be sure to scale out to a list of size ﻿
+10
+,
+000
+10,000﻿ and average the timings ﻿
+50
+50﻿ times. (You don’t have to sample each value from ﻿
+1
+1﻿ to ﻿
+10
+,
+000
+10,000﻿! In fact, this is not a good idea!). 
+
+Code Cell 9 of 11
+In [146]
+1
+# your code here
+2
+import random
+3
+​
+4
+def generate_shuffled_list(size):
+5
+    """
+6
+    Generates a shuffled list of integers from 1 to size.
+7
+​
+8
+    Parameters:
+9
+    size (int): The size of the list.
+10
+​
+11
+    Returns:
+12
+    list: A shuffled list of integers from 1 to size.
+13
+    """
+14
+    shuffled_list = list(range(1, size + 1))
+15
+    random.shuffle(shuffled_list)
+16
+    return shuffled_list
+17
+​
+18
+def measure_stats(size):
+19
+    """
+20
+    Measures the average depth and height of a binary search tree 
+21
+    constructed from a shuffled list of integers from 1 to size.
+22
+​
+23
+    Parameters:
+24
+    size (int): The size of the list and the number of nodes in the tree.
+25
+​
+26
+    Returns:
+27
+    tuple: A tuple containing the average depth and height of the tree.
+28
+    """
+29
+    # Generate shuffled list
+30
+    shuffled_list = generate_shuffled_list(size)
+31
+    
+32
+    # Create a BinarySearchTree and insert the shuffled nodes
+33
+    bst = BinarySearchTree()
+34
+    for node in shuffled_list:
+35
+        bst.insert(Node(node))
+36
+    
+37
+    # Measure average depth and height
+38
+    avg_depth_result = avg_depth(bst)
+39
+    height_result = height(bst)
+40
+    
+41
+    return avg_depth_result, height_result
+42
+​
+43
+# Test with increasing sizes of lists
+44
+list_sizes = [10, 100, 1000, 10000]  # Example sizes
+45
+for size in list_sizes:
+46
+    avg_depth_result, height_result = measure_stats(size)
+47
+    print(f"For size {size}: Average Depth = {avg_depth_result}, Height = {height_result}")
+48
+​
+49
+​
+50
+​
+51
+                       
+52
+​
+Run Code
+Out [146]
+---------------------------------------------------------------------------
+TypeError                                 Traceback (most recent call last)
+<ipython-input-146-4aecdd6c4d1e> in <module>
+     18             bst.insert(Node(ele))
+     19 
+---> 20         avg_sum += avg_depth(bst)
+     21         max_sum += height(bst)
+     22 
+
+TypeError: 'float' object is not callable
+Question 4 of 6
+Q6: Is the plot above in agreement with the theoretically expected result? Analyze the time complexity of generating a randomly shuffled BST and calculating the average depth of nodes in the tree, and its height. How do these complexities contribute to the observed scaling behavior? Are there any trade-offs or limitations associated with the computational requirements of these operations? Provide a thorough explanation.
+
+Again, I was not able to plot the graph but I believe it should plot a logarithmic line in accordance with the theoretical expectation of a complexity of O(log n). 
+
+Generating a tree should have a time complexity of O(n) since each new node needs to be compared to the existing ones while the avg depth and height should have a complexity of O(log n) due to the fact that the randomization behavior should be similar to the best case behavior of tree height of log n instead o n (with fairly balanced partition). 
+
+
+
+Question 5 of 6
+Challenge Q7: What is the probability that a randomly built binary tree is a valid BST? 
+
+
+
+For simplicity, let's assume that given a set of nodes, we construct the binary tree by filling in the levels, one at a time (as we would do for a heap, but without worrying about any of the properties for now). Please use the code cells below as needed to demonstrate the validity of your result.
+
+
+
+Note: Students who tackle this question may receive an extra grade!
+
+
+
+Code Cell 10 of 11
+In [ ]
+1
+# Your code here
+2
+​
+3
+### TEST CODES
+4
+​
+5
+def depth(node):
+6
+        depth = 0
+7
+        while node.parent is not None:
+8
+            node = node.parent
+9
+            depth += 1
+10
+        return depth
+11
+    
+12
+    
+13
+if bst.root is None:
+14
+        return 0
+15
+    elif node.value == bst.root.value:
+16
+        return 0
+17
+    elif node.value < bst.root.value:
+18
+        return 1 + depth(bst.left_subtree(), node)
+19
+    else:
+20
+        return 1 + depth(bst.right_subtree(), node)
+Run Code
+Code Cell 11 of 11
+In [ ]
+1
+# Your code here
+2
+​
+3
+### TEST CODES
+4
+​
+5
+num_comparisons = 0
+6
+    num_nodes = 0
+7
+    
+8
+    for node in bst:
+9
+        num_comparisons += depth(bst, node) + 1
+10
+        num_nodes += 1
+11
+    
+12
+    avg_comparisons = num_comparisons / num_nodes
+13
+    return avg_comparisons
+14
+​
+15
+​
+16
+​
+17
+def calculate_avg(node):
+18
+        if node is None:
+19
+            return 0, 0
+20
+        left_avg, left_count = calculate_avg(node.left)
+21
+        right_avg, right_count = calculate_avg(node.right)
+22
+        total_count = left_count + right_count + 1
+23
+        total_avg = (left_avg * left_count + right_avg * right_count + depth(node)) / total_count
+24
+        return total_avg, total_count
+25
+​
+26
+    avg, count = calculate_avg(bst.root)
+27
+    return avg + 1 
+Run Code
+Question 6 of 6
+Now, check how well you did on your PCW by ticking the boxes with the tasks you successfully completed!
+
+
+Explain the process of inserting nodes into a BST sequentially to build the tree.
+
+Review last session's concepts, with a focus on the running times of each of the BST operations.
+You're all done and ready for class! 🎉
+
+
+
+Please remember to write down any remaining questions or confusions at the top of your workbook in the appropriate textbox. Actively highlighting these areas will ensure focused discussions and provide valuable support for your learning.
